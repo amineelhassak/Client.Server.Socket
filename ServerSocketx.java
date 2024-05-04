@@ -2,6 +2,38 @@ package clientServerExams;
 import java.io.*;
 import java.net.*;
 
+class Harmonique implements  Runnable
+{
+    private int nbr;
+    private Double val_ret;
+    public Harmonique(int nbr)
+    {
+        this.nbr = nbr;
+    }
+    public double somme (int N )
+    {
+        double somme =0;
+        for (int i = 1 ; i <= N ; i ++)
+        {
+            somme += 1.0 / i;
+        }
+        return somme ;
+    }
+    @Override
+    public void run()
+    {
+        val_ret = somme(nbr);
+        System.out.println("somme is " + val_ret);
+    }
+    public static void main (String [] args ) {
+        Harmonique har ;
+        int a = 3;
+        int b = 10;
+        har = new Harmonique(a);
+        har = new Harmonique(b);
+    }
+}
+
 public class ServerSocketx
 {
     private int                 port;
@@ -10,7 +42,6 @@ public class ServerSocketx
     private  DataOutputStream   out;
     private  DataInputStream    in;
     private int                 nbr;
-    private Harmonique                  har;
     public ServerSocketx (int port)
     {
         this.port = port;
@@ -26,13 +57,15 @@ public class ServerSocketx
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
         nbr = in.readInt();
-        out.writeLong(har.somme(nbr));
+        Harmonique har = new Harmonique(nbr);
+        Double n = har.somme(nbr);
+        out.writeDouble(n);
     }
     public static void main()
     {
         try
         {
-            ServerSocketx cl = new ServerSocketx(80800);
+            ServerSocketx cl = new ServerSocketx(80808);
             cl.connect();
             cl.communicClient();
         }
